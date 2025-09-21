@@ -46,7 +46,7 @@ const char* TOPICO_BPM_SPO2 = "/TEF/des001/attrs";
 const char* TOPICO_VELOCIDADE = "/TEF/des001/attrs/velocidade";
 
 📦 Bibliotecas Necessárias
-
+<img src="./FiwareSprint.png">
 Wire.h
 
 MPU6050.h
