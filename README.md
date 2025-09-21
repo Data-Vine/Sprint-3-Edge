@@ -1,105 +1,133 @@
 # Sprint-3-Edge
-📌 Descrição
 
-Este projeto simula um sistema de monitoramento remoto utilizando ESP32, DHT22 e MPU6050, com envio de dados via MQTT. Ele captura:
+📌 **Descrição do Projeto**  
+Este projeto simula um **sistema de monitoramento remoto** utilizando **ESP32**, integrando sensores DHT22 e MPU6050, com envio de dados via **MQTT**.  
 
-BPM (batimentos por minuto) e SpO₂ (oxigenação do sangue) através de simulação do DHT22.
+O sistema captura:  
+- **BPM (batimentos por minuto)** e **SpO₂ (oxigenação do sangue)** através de simulação pelo DHT22  
+- **Aceleração** nos eixos X, Y, Z com o MPU6050  
+- **Velocidade** estimada integrando a aceleração  
+- Publicação de todos os dados em tópicos MQTT distintos para monitoramento em tempo real  
 
-Aceleração nos eixos X, Y, Z com o MPU6050, calculando a velocidade integrando a aceleração.
+---
 
-Os dados são publicados em tópicos MQTT distintos para monitoramento em tempo real.
+🏗 **Arquitetura Proposta**  
+O ESP32 atua como dispositivo de borda (**Edge Device**), realizando a leitura dos sensores, processamento local e envio para o broker MQTT.  
+Os dados podem ser consumidos em plataformas como **FIWARE Orion Context Broker**, **STH-Comet** ou visualizados via **Postman**.  
 
-🛠 Componentes Utilizados
+<img src="./FiwareSprint.png" alt="Arquitetura do Sistema" width="600">
 
-ESP32 – microcontrolador principal.
+---
 
-DHT22 – sensor de temperatura e umidade (usado para simular BPM e SpO₂).
+🛠 **Recursos Necessários**
+- **ESP32** – microcontrolador principal  
+- **DHT22** – sensor de temperatura e umidade (simula BPM e SpO₂)  
+- **MPU6050** – sensor de aceleração e giroscópio  
+- **WiFi** – conexão à rede local  
+- **Broker MQTT** – para envio e monitoramento dos dados  
+- **Bibliotecas Arduino**:  
+  - Wire.h  
+  - MPU6050.h  
+  - WiFi.h  
+  - PubSubClient.h  
+  - DHT.h  
 
-MPU6050 – sensor de aceleração e giroscópio.
+---
 
-WiFi – conexão à rede local.
+🔌 **Conexões**
 
-PubSubClient – biblioteca para comunicação MQTT.
+**DHT22**
+| Pino | Conexão |
+|------|---------|
+| VCC  | 3.3V    |
+| GND  | GND     |
+| DATA | GPIO 1  |
 
-🔌 Conexões
-DHT22
-Pino	Conexão
-VCC	3.3V
-GND	GND
-DATA	GPIO 1
-MPU6050
-Pino	Conexão
-VCC	3.3V
-GND	GND
-SDA	GPIO 5
-SCL	GPIO 6
-INT	GPIO 4
-⚙️ Configurações
-WiFi
+**MPU6050**
+| Pino | Conexão |
+|------|---------|
+| VCC  | 3.3V    |
+| GND  | GND     |
+| SDA  | GPIO 5  |
+| SCL  | GPIO 6  |
+| INT  | GPIO 4  |
+
+---
+
+⚙️ **Configurações do Projeto**
+
+**WiFi**
+```cpp
 const char* default_SSID = "Wokwi-GUEST";
 const char* default_PASSWORD = "";
 
-MQTT
-const char* default_BROKER_MQTT = "20.246.40.8";
+**MQTT**
+const char* default_BROKER_MQTT = "20.49.4.108";
 const int default_BROKER_PORT = 1883;
-const char* TOPICO_BPM_SPO2 = "/TEF/des001/attrs";
-const char* TOPICO_VELOCIDADE = "/TEF/des001/attrs/velocidade";
 
-📦 Bibliotecas Necessárias
-<img src="./FiwareSprint.png">
-Wire.h
+const char* TOPICO_SUBSCRIBE = "/TEF/des001/cmd";
+const char* TOPICO_BPM = "/TEF/des001/attrs/bpm";
+const char* TOPICO_SPO2 = "/TEF/des001/attrs/spo2";
+const char* TOPICO_VELOCIDADEX = "/TEF/des001/attrs/velocidadeX";
+const char* TOPICO_VELOCIDADEY = "/TEF/des001/attrs/velocidadeY";
+const char* TOPICO_VELOCIDADEZ = "/TEF/des001/attrs/velocidadeZ";
+const char* ID_MQTT = "des001";
 
-MPU6050.h
+---
 
-WiFi.h
+**⚡ Funcionalidades**
+Leitura de sensores DHT22 simulando BPM (60–100) e SpO₂ (90–100)
 
-PubSubClient.h
+Leitura do MPU6050: aceleração nos eixos X, Y, Z
 
-DHT.h
-
-⚡ Funcionalidades
-
-Leitura de sensores DHT22: simula BPM (60–100 bpm) e SpO₂ (90–100%).
-
-Leitura do MPU6050: captura aceleração nos eixos X, Y, Z.
-
-Cálculo de velocidade: integração simples da aceleração em cada eixo.
+Cálculo de velocidade integrando aceleração
 
 Publicação MQTT:
 
-/TEF/des001/attrs → BPM e SpO₂.
+/TEF/des001/attrs/bpm → BPM
 
-/TEF/des001/attrs/velocidade → velocidade X/Y/Z.
+/TEF/des001/attrs/spo2 → SpO₂
 
-Monitoramento Serial: exibe todos os valores em tempo real.
+/TEF/des001/attrs/velocidadeX/Y/Z → velocidade
 
-📡 Fluxo de Dados
+Monitoramento em tempo real via Serial Monitor
 
-ESP32 lê sensores a cada 1 segundo.
+---
 
-Calcula média de BPM/SpO₂ (10 leituras).
+**📡 Fluxo de Dados**
 
-Integra aceleração para estimativa de velocidade.
+ESP32 lê sensores a cada 1 segundo
 
-Publica valores nos tópicos MQTT correspondentes.
+Calcula médias de BPM/SpO₂ (10 leituras)
 
-Pode ser consumido via broker MQTT ou plataformas como FIWARE/NGSI-LD ou STH-Comet.
+Integra aceleração para cálculo de velocidades
 
-🚀 Como Testar
+Publica valores nos tópicos MQTT
 
-Abra o projeto no Wokwi
-. https://wokwi.com/projects/442194358480221185
+Consumo via Postman, FIWARE Orion ou STH-Comet
 
-Clique em Start Simulation.
+---
 
-Abra o Serial Monitor para verificar leituras de BPM, SpO₂ e velocidades.
+**🚀 Como Testar**
 
-Confira os dados publicados no broker MQTT, caso tenha acesso a um.
+Abra o projeto no Wokwi:
+Simulação no Wokwi
 
-🧑‍💻 Integrantes
+Clique em Start Simulation
 
+Abra o Serial Monitor para verificar leituras em tempo real
+
+Verifique dados publicados no broker MQTT
+
+---
+
+
+**🧑‍💻 Integrantes**
 Alexandre Wesley – 561622
 
 João Stellare – 565813
 
 Kauê de Almeida Pena – 564211
+
+Grupo: Data-Vine
+Turma: 1ESPF
