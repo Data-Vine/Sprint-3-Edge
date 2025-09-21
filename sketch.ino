@@ -16,14 +16,17 @@ Kauê de Almeida Pena - 564211
 // ===================== CONFIGURAÇÕES =====================
 const char* default_SSID = "Wokwi-GUEST"; 
 const char* default_PASSWORD = "";        
-const char* default_BROKER_MQTT = "20.246.40.8"; 
+const char* default_BROKER_MQTT = "20.49.4.108"; 
 const int   default_BROKER_PORT = 1883;         
 
 // Tópicos MQTT
-const char* TOPICO_SUBSCRIBE = "/TEF/des001/cmd";    
-const char* TOPICO_BPM_SPO2 = "/TEF/des001/attrs";  
-const char* TOPICO_VELOCIDADE = "/TEF/des001/attrs/velocidade";
-const char* ID_MQTT = "des_001"; 
+const char* TOPICO_SUBSCRIBE = "/TEF/des001/cmd"; 
+const char* TOPICO_BPM = "/TEF/des001/attrs/bpm";
+const char* TOPICO_SPO2 = "/TEF/des001/attrs/spo2";
+const char* TOPICO_VELOCIDADEX = "/TEF/des001/attrs/velocidadeX";
+const char* TOPICO_VELOCIDADEY = "/TEF/des001/attrs/velocidadeY";
+const char* TOPICO_VELOCIDADEZ = "/TEF/des001/attrs/velocidadeZ";
+const char* ID_MQTT = "des001"; 
 
 // ===================== PINOS =====================
 #define DHTPIN 1
@@ -53,7 +56,6 @@ int16_t gx, gy, gz;
 float velocidadeX = 0, velocidadeY = 0, velocidadeZ = 0;
 unsigned long ultimoTempoMPU = 0;
 
-int vezes = 0;
 
 // ===================== SETUP =====================
 void setup() {
@@ -67,7 +69,6 @@ void setup() {
 
   // Inicializa MQTT
   MQTT.setServer(default_BROKER_MQTT, default_BROKER_PORT);
-  MQTT.setCallback(mqtt_callback);
   reconnectMQTT();
 
   // Inicializa sensores
@@ -86,18 +87,16 @@ void setup() {
 
 // ===================== LOOP =====================
 void loop() {
-  if (!MQTT.connected()) reconnectMQTT();
+  if (!MQTT.connected()){
+    reconnectMQTT();
+  }
   MQTT.loop();
 
   leituraSensor(); // Simula BPM/SpO2
   leituraMPU();    // Lê aceleração e calcula velocidade
 }
 
-// ===================== FUNÇÕES AUXILIARES =====================
-void mqtt_callback(char* topic, byte* payload, unsigned int length) {
-  // Aqui você pode processar comandos recebidos via MQTT
-}
-
+// ===================== FUNÇÃO AUXILIAR =====================
 void reconnectMQTT() {
   while (!MQTT.connected()) {
     Serial.print("* Tentando se conectar ao Broker MQTT: ");
@@ -135,7 +134,10 @@ void leituraSensor() {
     // Publica no MQTT
     char payload[100];
     snprintf(payload, sizeof(payload), "{\"mediaBPM\":%d,\"mediaSPO2\":%d}", mediaBPM, mediaSPO2);
-    MQTT.publish(TOPICO_BPM_SPO2, payload);
+    String sp = String(mediaSPO2);
+    String bp = String(mediaBPM);
+    MQTT.publish(TOPICO_BPM, sp.c_str());
+    MQTT.publish(TOPICO_SPO2, bp.c_str());
 
     ultimoRegistro = millis();
   }
@@ -160,10 +162,10 @@ void leituraMPU() {
   velocidadeZ += accelZ * dt;
 
   // Exibe no Serial
-  Serial.print("Velocidade X: "); Serial.print(velocidadeX);
-  Serial.print(" Y: "); Serial.print(velocidadeY);
-  Serial.print(" Z: "); Serial.println(velocidadeZ);
-  vezes++;
+  Serial.print("Velocidade X: "); Serial.println(velocidadeX);
+  Serial.print("Velocidade Y: "); Serial.println(velocidadeY);
+  Serial.print("Velocidade Z: "); Serial.println(velocidadeZ);
+
   delay(1000);
 
   // Publica no MQTT
@@ -171,8 +173,13 @@ void leituraMPU() {
   snprintf(payload, sizeof(payload),
            "{\"velocidadeX\":%.2f,\"velocidadeY\":%.2f,\"velocidadeZ\":%.2f}",
            velocidadeX, velocidadeY, velocidadeZ);
-  MQTT.publish(TOPICO_VELOCIDADE, payload);
-  if(vezes == 10){
-    ultimoTempo = 0;
-  }
+  String velX = String(velocidadeX);
+  String velY = String(velocidadeY);
+  String velZ = String(velocidadeZ);
+  MQTT.publish(TOPICO_VELOCIDADEX, velX.c_str());
+  MQTT.publish(TOPICO_VELOCIDADEY, velY.c_str());
+  MQTT.publish(TOPICO_VELOCIDADEZ, velZ.c_str());
+  velocidadeZ = 0;
+  velocidadeY = 0;
+  velocidadeX = 0;
 }
