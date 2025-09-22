@@ -1,5 +1,15 @@
 # Sprint-3-Edge
 
+**🧑‍💻 Integrantes**
+Alexandre Wesley – 561622
+
+João Stellare – 565813
+
+Kauê de Almeida Pena – 564211
+
+Grupo: Data-Vine
+Turma: 1ESPF
+---
 📌 **Descrição do Projeto**  
 Este projeto simula um **sistema de monitoramento remoto** utilizando **ESP32**, integrando sensores DHT22 e MPU6050, com envio de dados via **MQTT**.  
 
@@ -57,12 +67,13 @@ Os dados podem ser consumidos em plataformas como **FIWARE Orion Context Broker*
 ⚙️ **Configurações do Projeto**
 
 **WiFi**
-```cpp
 const char* default_SSID = "Wokwi-GUEST";
 const char* default_PASSWORD = "";
 
+---
+
 **MQTT**
-const char* default_BROKER_MQTT = "20.49.4.108";
+const char* default_BROKER_MQTT = "IP Máquina";
 const int default_BROKER_PORT = 1883;
 
 const char* TOPICO_SUBSCRIBE = "/TEF/des001/cmd";
@@ -72,6 +83,7 @@ const char* TOPICO_VELOCIDADEX = "/TEF/des001/attrs/velocidadeX";
 const char* TOPICO_VELOCIDADEY = "/TEF/des001/attrs/velocidadeY";
 const char* TOPICO_VELOCIDADEZ = "/TEF/des001/attrs/velocidadeZ";
 const char* ID_MQTT = "des001";
+
 
 ---
 
@@ -109,9 +121,21 @@ Consumo via Postman, FIWARE Orion ou STH-Comet
 ---
 
 **🚀 Como Testar**
+Crie e configure uma máquina Virtual(Azure, AWS, etc)(Vídeo de Diogo Pelinson):
+https://lnkd.in/p/gi_tbYD2
+
+Baixe o Postman para fazer o frontend:
+https://www.postman.com/downloads/
+
+Baixe o fiware na máquina(git fiware do professor Cabrini):
+https://github.com/fabiocabrini/fiware/tree/main
+
 
 Abra o projeto no Wokwi:
-Simulação no Wokwi
+https://wokwi.com/projects/442194358480221185
+
+Modifique o ip do código do ESP e do Postman para a máquina com o fiware instalado.
+
 
 Clique em Start Simulation
 
@@ -119,15 +143,6 @@ Abra o Serial Monitor para verificar leituras em tempo real
 
 Verifique dados publicados no broker MQTT
 
----
+Vídeo youtube do teste:
 
 
-**🧑‍💻 Integrantes**
-Alexandre Wesley – 561622
-
-João Stellare – 565813
-
-Kauê de Almeida Pena – 564211
-
-Grupo: Data-Vine
-Turma: 1ESPF
