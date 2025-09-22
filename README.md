@@ -67,12 +67,14 @@ Os dados podem ser consumidos em plataformas como **FIWARE Orion Context Broker*
 ⚙️ **Configurações do Projeto**
 
 **WiFi**
+```cpp
 const char* default_SSID = "Wokwi-GUEST";
 const char* default_PASSWORD = "";
-
+```
 ---
 
 **MQTT**
+```cpp
 const char* default_BROKER_MQTT = "IP Máquina";
 const int default_BROKER_PORT = 1883;
 
@@ -83,7 +85,7 @@ const char* TOPICO_VELOCIDADEX = "/TEF/des001/attrs/velocidadeX";
 const char* TOPICO_VELOCIDADEY = "/TEF/des001/attrs/velocidadeY";
 const char* TOPICO_VELOCIDADEZ = "/TEF/des001/attrs/velocidadeZ";
 const char* ID_MQTT = "des001";
-
+```
 
 ---
 
@@ -144,5 +146,5 @@ Abra o Serial Monitor para verificar leituras em tempo real
 Verifique dados publicados no broker MQTT
 
 Vídeo youtube do teste:
-
+https://youtu.be/DlEyrECo8C0
 
